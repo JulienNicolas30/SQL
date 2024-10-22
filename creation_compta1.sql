@@ -1,30 +1,54 @@
-use compta;
+USE compta;
 
-Create table
-    IF not exists article (
-        ID int (11),
-        REF varchar(13),
-        DESIGNATION varchar(255),
-        PRIX decimal(7, 2),
-        ID_FOU int (11)
-    );
+DROP TABLE IF EXISTS article;
+CREATE TABLE IF NOT EXISTS article (
+    id INT PRIMARY KEY,
+    ref VARCHAR(50),
+    designation VARCHAR(50),
+    prix DECIMAL(6, 2),
+    id_fou INT
+);
 
-Create table
-    if not exists fournisseur (id int (11), Nom varchar(25));
+DROP TABLE IF EXISTS fournisseur;
+CREATE TABLE IF NOT EXISTS fournisseur (id INT PRIMARY KEY, nom VARCHAR(50));
 
-Create table
-    if not exists bon (
-        ID int (11),
-        NUMERO int (11),
-        DATE_CMDE datetime,
-        DELAI int (11),
-        ID_FOU int (11)
-    );
+DROP TABLE IF EXISTS bon;
+CREATE TABLE IF NOT EXISTS bon (
+    id INT PRIMARY KEY,
+    numero INT,
+    date_cmde DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    delai INT,
+    id_fou INT
+);
 
-Create table
-    if not exists compo (
-        ID int (11),
-        ID_ART int (11),
-        ID_BON int (11),
-        QTE int (11)
-    );
+DROP TABLE IF EXISTS compo;
+CREATE TABLE IF NOT EXISTS compo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_art INT,
+    id_bon INT,
+    qte INT
+);
+
+-- mettre la foreign key de Article
+ALTER TABLE
+    article
+ADD
+    CONSTRAINT FOREIGN KEY (id_fou) REFERENCES fournisseur(id);
+
+-- mettre la foreign key de bon
+ALTER TABLE
+    bon
+ADD
+    CONSTRAINT FOREIGN KEY (id_fou) REFERENCES fournisseur(id);
+
+-- mettre la foreign key de compo
+ALTER TABLE
+    compo
+ADD
+    CONSTRAINT FOREIGN KEY (id_art) REFERENCES article(id);
+
+-- mettre la foreign key de compo
+ALTER TABLE
+    compo
+ADD
+    CONSTRAINT FOREIGN KEY (id_bon) REFERENCES bon(id);
